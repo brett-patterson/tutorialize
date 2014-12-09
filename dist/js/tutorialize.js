@@ -12,11 +12,15 @@
       backdrop: true
     };
     return $.tutorialize = function(options) {
-      var angle, annotation, annotationElement, annotationX, annotationY, arrowX, arrowX2, arrowY, arrowY2, canvas, context, element, elements, extraDegrees, panel, slope, tutorial, tutorialBg, tutorialContainer, _i, _len, _results;
+      var canvas, context, tutorial, tutorialBg, tutorialContainer, tutorialize;
       if (options == null) {
         options = {};
       }
       options = $.extend(defaultOptions, options);
+      tutorialize = {
+        currentIndex: 0,
+        options: options
+      };
       tutorial = options.tutorial;
       tutorialBg = options.backdrop ? 'rgba(0, 0, 0, 0.5)' : 'none';
       tutorialContainer = $('<div/>', {
@@ -29,70 +33,73 @@
         "class": 'tutorial-canvas'
       }).appendTo(tutorialContainer).attr('width', tutorialContainer.width()).attr('height', tutorialContainer.height())[0];
       context = canvas.getContext('2d');
-      _results = [];
-      for (_i = 0, _len = tutorial.length; _i < _len; _i++) {
-        panel = tutorial[_i];
-        _results.push((function() {
-          var _j, _len1, _results1;
-          _results1 = [];
-          for (_j = 0, _len1 = panel.length; _j < _len1; _j++) {
-            annotation = panel[_j];
-            annotationX = annotation.position.x;
-            annotationY = annotation.position.y;
-            annotationElement = $('<div/>', {
-              "class": 'annotation',
-              css: {
-                left: annotationX,
-                top: annotationY
-              }
-            }).append($('<p/>', {
-              html: annotation.text
-            })).appendTo(tutorialContainer);
-            if (annotation.arrow) {
-              elements = $(annotation.selector);
-              _results1.push((function() {
-                var _k, _len2, _results2;
-                _results2 = [];
-                for (_k = 0, _len2 = elements.length; _k < _len2; _k++) {
-                  element = elements[_k];
-                  element = $(element);
-                  context.save();
-                  context.beginPath();
-                  arrowX = annotationX + annotationElement.outerWidth() / 2;
-                  arrowY = annotationY + annotationElement.outerHeight() / 2;
-                  context.moveTo(arrowX, arrowY);
-                  arrowX2 = element.offset().left + element.width() / 2;
-                  arrowY2 = element.offset().top + element.height() / 2;
-                  context.lineTo(arrowX2, arrowY2);
-                  context.strokeStyle = options.arrows.color;
-                  context.lineWidth = options.arrows.weight;
-                  context.stroke();
-                  context.closePath();
-                  slope = (arrowY2 - arrowY) / (arrowX2 - arrowX);
-                  angle = Math.atan(slope);
-                  extraDegrees = arrowX2 > arrowX ? 90 : -90;
-                  angle += extraDegrees * Math.PI / 180;
-                  context.beginPath();
-                  context.translate(arrowX2, arrowY2);
-                  context.rotate(angle);
-                  context.moveTo(0, -10);
-                  context.lineTo(8, 8);
-                  context.lineTo(-8, 8);
-                  context.fillStyle = options.arrows.color;
-                  context.fill();
-                  context.closePath();
-                  _results2.push(context.restore());
-                }
-                return _results2;
-              })());
-            } else {
-              _results1.push(void 0);
+      tutorialize.showPanel = function(panel) {
+        var angle, annotation, annotationElement, annotationX, annotationY, arrowX, arrowX2, arrowY, arrowY2, element, elements, extraDegrees, slope, _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = panel.length; _i < _len; _i++) {
+          annotation = panel[_i];
+          annotationX = annotation.position.x;
+          annotationY = annotation.position.y;
+          annotationElement = $('<div/>', {
+            "class": 'annotation',
+            css: {
+              left: annotationX,
+              top: annotationY
             }
+          }).append($('<p/>', {
+            html: annotation.text
+          })).appendTo(tutorialContainer);
+          if (annotation.arrow) {
+            elements = $(annotation.selector);
+            _results.push((function() {
+              var _j, _len1, _results1;
+              _results1 = [];
+              for (_j = 0, _len1 = elements.length; _j < _len1; _j++) {
+                element = elements[_j];
+                element = $(element);
+                context.save();
+                context.beginPath();
+                arrowX = annotationX + annotationElement.outerWidth() / 2;
+                arrowY = annotationY + annotationElement.outerHeight() / 2;
+                context.moveTo(arrowX, arrowY);
+                arrowX2 = element.offset().left + element.width() / 2;
+                arrowY2 = element.offset().top + element.height() / 2;
+                context.lineTo(arrowX2, arrowY2);
+                context.strokeStyle = options.arrows.color;
+                context.lineWidth = options.arrows.weight;
+                context.stroke();
+                context.closePath();
+                slope = (arrowY2 - arrowY) / (arrowX2 - arrowX);
+                angle = Math.atan(slope);
+                extraDegrees = arrowX2 > arrowX ? 90 : -90;
+                angle += extraDegrees * Math.PI / 180;
+                context.beginPath();
+                context.translate(arrowX2, arrowY2);
+                context.rotate(angle);
+                context.moveTo(0, -10);
+                context.lineTo(8, 8);
+                context.lineTo(-8, 8);
+                context.fillStyle = options.arrows.color;
+                context.fill();
+                context.closePath();
+                _results1.push(context.restore());
+              }
+              return _results1;
+            })());
+          } else {
+            _results.push(void 0);
           }
-          return _results1;
-        })());
-      }
-      return _results;
+        }
+        return _results;
+      };
+      tutorialize.showPanelAtIndex = function(index) {
+        this.showPanel(tutorial[index]);
+        return this.currentIndex = index;
+      };
+      tutorialize.start = function() {
+        return this.showPanelAtIndex(0);
+      };
+      return tutorialize;
     };
   })(jQuery);
 

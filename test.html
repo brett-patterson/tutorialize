@@ -44,7 +44,7 @@
 
     <script type="text/javascript">
     $(function() {
-        $.tutorialize({
+        var tutorial = $.tutorialize({
             tutorial: [
                 [
                     {
@@ -82,6 +82,8 @@
                 ]
             ]
         });
+
+        tutorial.start();
     });
     </script>
 

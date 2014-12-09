@@ -9,6 +9,10 @@
 
     $.tutorialize = (options={}) ->
         options = $.extend defaultOptions, options
+        tutorialize = {
+            currentIndex: 0,
+            options: options
+        }
 
         tutorial = options.tutorial
         tutorialBg = if options.backdrop then 'rgba(0, 0, 0, 0.5)' else 'none'
@@ -25,7 +29,7 @@
         .attr('height', tutorialContainer.height())[0]
         context = canvas.getContext '2d'
 
-        for panel in tutorial
+        tutorialize.showPanel = (panel) ->
             for annotation in panel
                 annotationX = annotation.position.x
                 annotationY = annotation.position.y
@@ -81,4 +85,13 @@
 
                         context.closePath()
                         context.restore()
+
+        tutorialize.showPanelAtIndex = (index) ->
+            this.showPanel tutorial[index]
+            this.currentIndex = index
+
+        tutorialize.start = () ->
+            this.showPanelAtIndex 0
+
+        return tutorialize
 ) jQuery
