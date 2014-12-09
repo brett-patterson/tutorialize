@@ -1,0 +1,99 @@
+<html>
+    <head>
+
+    <!-- Uncompressed -->
+    <link type="text/css" rel="stylesheet" href="dist/css/tutorialize.css" />
+    <script type="text/javascript" src="lib/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="dist/js/tutorialize.js"></script>
+
+    <!-- Compressed
+    <link type="text/css" rel="stylesheet" href="dist/css/tutorialize.min.css" />
+    <script type="text/javascript" src="dist/js/tutorialize.min.js"></script>
+    -->
+
+    <style>
+    .box {
+        border: 1px solid black;
+        width: 400px;
+        height: 400px;
+    }
+
+    .line {
+        display: inline-block;
+    }
+
+    .one {
+        background-color: red;
+    }
+
+    .two {
+        background-color: blue;
+    }
+
+    .three {
+        background-color: green;
+    }
+
+    .twoOne {
+        background-color: yellow;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+    }
+    </style>
+
+    <script type="text/javascript">
+    $(function() {
+        $.tutorialize({
+            tutorial: [
+                [
+                    {
+                        selector: '.one',
+                        arrow: true,
+                        text: '<center><strong>Div #1</strong></center>' +
+                              'This is div #1',
+                        position: {
+                            x: 25,
+                            y: 25
+                        }
+                    },
+                    {
+                        selector: '.three',
+                        arrow: true,
+                        text: '<center><strong>Div #3</strong></center>' +
+                              'This is div #3',
+                        position: {
+                            x: 200,
+                            y: 400
+                        }
+                    }
+                ],
+                [
+                    {
+                        selector: '.two',
+                        arrow: true,
+                        text: '<center><strong>Div #3</strong></center>' +
+                              'This is div #3',
+                        position: {
+                            x: 500,
+                            y: 25
+                        }
+                    }
+                ]
+            ]
+        });
+    });
+    </script>
+
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="box one line"></div>
+            <div class="box two line">
+                <div class="box twoOne"></div>
+            </div>
+            <div class="box three"></div>
+        </div>
+    </body>
+</html>

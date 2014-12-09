@@ -1,2 +1,7 @@
 tutorialize
 ===========
+
+Requirements
+------------
+* nodejs
+* sass
