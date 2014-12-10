@@ -1,97 +1,123 @@
-(($) ->
-    defaultOptions =
-        tutorial: []
-        interactive: false
-        arrows:
-            weight: 6
-            color: 'white'
-        backdrop: true
+class Tutorialize
+    constructor: (tutorial, options) ->
+        defaultOptions =
+            tutorial: []
+            interactive: false
+            arrows:
+                weight: 6
+                color: 'white'
+            backdrop: true
+            exitOnBackgroundClick: false
 
-    $.tutorialize = (options={}) ->
-        options = $.extend defaultOptions, options
-        tutorialize = {
-            currentIndex: 0,
-            options: options
-        }
+        @tutorial = tutorial
+        @options = $.extend true, defaultOptions, options
+        @currentIndex = -1
+        @container = null
+        @canvas = null
 
-        tutorial = options.tutorial
-        tutorialBg = if options.backdrop then 'rgba(0, 0, 0, 0.5)' else 'none'
-        tutorialContainer = $('<div/>', {
-            class: 'backdrop'
+    start: () =>
+        if @options.backdrop
+            tutorialBg = 'rgba(0, 0, 0, 0.5)'
+        else
+            tutorialBg = 'none'
+
+        @container = $('<div/>', {
+            class: 'tutorial-backdrop'
             css:
                 background: tutorialBg
         }).appendTo $ 'body'
 
-        canvas = $('<canvas/>', {
+        if @options.exitOnBackgroundClick
+            @container.click @end
+
+        @container.append($('<a/>', {
+            class: 'tutorial-close'
+            html: '&#10006;'
+        }).click @end)
+
+        @canvas = $('<canvas/>', {
             class: 'tutorial-canvas'
-        }).appendTo(tutorialContainer)
-        .attr('width', tutorialContainer.width())
-        .attr('height', tutorialContainer.height())[0]
-        context = canvas.getContext '2d'
+        }).appendTo(@container)
+        .attr('width', @container.width())
+        .attr('height', @container.height())[0]
 
-        tutorialize.showPanel = (panel) ->
-            for annotation in panel
-                annotationX = annotation.position.x
-                annotationY = annotation.position.y
+        @showPanelAtIndex 0
 
-                annotationElement = $('<div/>', {
-                    class: 'annotation'
-                    css:
-                        left: annotationX
-                        top: annotationY
+    end: () =>
+        @container.remove()
+        $(@canvas).remove()
 
-                }).append($('<p/>', {
-                    html: annotation.text
-                })).appendTo tutorialContainer
+        @currentIndex = -1
+        @container = null
+        @canvas = null
 
-                if annotation.arrow
-                    elements = $ annotation.selector
+    showPanel: (panel) =>
+        for annotation in panel.annotations
+            annotationX = annotation.position.x
+            annotationY = annotation.position.y
 
-                    for element in elements
-                        element = $ element
-                        context.save()
+            annotationElement = $('<div/>', {
+                class: 'tutorial-annotation'
+                css:
+                    left: annotationX
+                    top: annotationY
 
-                        context.beginPath()
-                        arrowX = annotationX +
-                                 annotationElement.outerWidth() / 2
-                        arrowY = annotationY +
-                                 annotationElement.outerHeight() / 2
-                        context.moveTo arrowX, arrowY
+            }).append($('<p/>', {
+                html: annotation.text
+            })).appendTo @container
 
-                        arrowX2 = element.offset().left + element.width() / 2
-                        arrowY2 = element.offset().top + element.height() / 2
-                        context.lineTo arrowX2, arrowY2
+            if annotation.arrow
+                elements = $ annotation.selector
 
-                        context.strokeStyle = options.arrows.color
-                        context.lineWidth = options.arrows.weight
-                        context.stroke()
-                        context.closePath()
+                for element in elements
+                    element = $ element
+                    context = @canvas.getContext '2d'
+                    context.save()
+
+                    context.beginPath()
+                    arrowX = annotationX +
+                             annotationElement.outerWidth() / 2
+                    arrowY = annotationY +
+                             annotationElement.outerHeight() / 2
+                    context.moveTo arrowX, arrowY
+
+                    arrowX2 = element.offset().left + element.width() / 2
+                    arrowY2 = element.offset().top + element.height() / 2
+                    context.lineTo arrowX2, arrowY2
+
+                    context.strokeStyle = @options.arrows.color
+                    context.lineWidth = @options.arrows.weight
+                    context.stroke()
+                    context.closePath()
 
 
-                        slope = (arrowY2 - arrowY) / (arrowX2 - arrowX)
-                        angle = Math.atan(slope)
-                        extraDegrees = if arrowX2 > arrowX then 90 else -90
-                        angle +=  extraDegrees * Math.PI / 180;
+                    slope = (arrowY2 - arrowY) / (arrowX2 - arrowX)
+                    angle = Math.atan(slope)
+                    extraDegrees = if arrowX2 > arrowX then 90 else -90
+                    angle += extraDegrees * Math.PI / 180;
 
-                        context.beginPath()
-                        context.translate(arrowX2, arrowY2)
-                        context.rotate(angle)
-                        context.moveTo(0, -10)
-                        context.lineTo(8, 8)
-                        context.lineTo(-8, 8)
+                    context.beginPath()
+                    context.translate(arrowX2, arrowY2)
+                    context.rotate(angle)
+                    context.moveTo(0, -10)
+                    context.lineTo(8, 8)
+                    context.lineTo(-8, 8)
 
-                        context.fillStyle = options.arrows.color
-                        context.fill()
+                    context.fillStyle = @options.arrows.color
+                    context.fill()
 
-                        context.closePath()
-                        context.restore()
+                    context.closePath()
+                    context.restore()
 
-        tutorialize.showPanelAtIndex = (index) ->
-            this.showPanel tutorial[index]
-            this.currentIndex = index
+    showPanelAtIndex: (index) =>
+        @showPanel @tutorial[index]
+        @currentIndex = index
 
-        tutorialize.start = () ->
-            this.showPanelAtIndex 0
 
-        return tutorialize
+(($) ->
+    $.tutorialize = (options={}) ->
+        tutorial = options.tutorial
+        delete options.tutorial
+
+        return new Tutorialize(tutorial, options)
 ) jQuery

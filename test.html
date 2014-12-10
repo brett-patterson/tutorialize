@@ -45,41 +45,50 @@
     <script type="text/javascript">
     $(function() {
         var tutorial = $.tutorialize({
+            interactive: true,
             tutorial: [
-                [
-                    {
-                        selector: '.one',
-                        arrow: true,
-                        text: '<center><strong>Div #1</strong></center>' +
-                              'This is div #1',
-                        position: {
-                            x: 25,
-                            y: 25
+                { // Panel 1
+                    title: 'Panel 1',
+                    text: 'This is panel 1. Look at divs one and three!',
+                    annotations: [
+                        { // Annotation 1
+                            selector: '.one',
+                            arrow: true,
+                            text: '<center><strong>Div #1</strong></center>' +
+                                  'This is div #1',
+                            position: {
+                                x: 25,
+                                y: 25
+                            }
+                        },
+                        { // Annotation 2
+                            selector: '.three',
+                            arrow: true,
+                            text: '<center><strong>Div #3</strong></center>' +
+                                  'This is div #3',
+                            position: {
+                                x: 200,
+                                y: 400
+                            }
                         }
-                    },
-                    {
-                        selector: '.three',
-                        arrow: true,
-                        text: '<center><strong>Div #3</strong></center>' +
-                              'This is div #3',
-                        position: {
-                            x: 200,
-                            y: 400
+                    ]
+                },
+                { // Panel 2
+                    title: 'Panel 2',
+                    text: 'This is panel 2. Look at div two!',
+                    annotations: [
+                        { // Annotation 1
+                            selector: '.two',
+                            arrow: true,
+                            text: '<center><strong>Div #2</strong></center>' +
+                                  'This is div #2',
+                            position: {
+                                x: 500,
+                                y: 25
+                            }
                         }
-                    }
-                ],
-                [
-                    {
-                        selector: '.two',
-                        arrow: true,
-                        text: '<center><strong>Div #3</strong></center>' +
-                              'This is div #3',
-                        position: {
-                            x: 500,
-                            y: 25
-                        }
-                    }
-                ]
+                    ]
+                }
             ]
         });
 
