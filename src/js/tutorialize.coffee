@@ -7,7 +7,8 @@ class Tutorialize
                 weight: 6
                 color: 'white'
             backdrop: true
-            exitOnBackgroundClick: false
+            closeOnBackgroundClick: false
+            closable: true
 
         @tutorial = tutorial
         @options = $.extend true, defaultOptions, options
@@ -27,13 +28,14 @@ class Tutorialize
                 background: tutorialBg
         }).appendTo $ 'body'
 
-        if @options.exitOnBackgroundClick
+        if @options.closable and @options.closeOnBackgroundClick
             @container.click @end
 
-        @container.append($('<a/>', {
-            class: 'tutorial-close'
-            html: '&#10006;'
-        }).click @end)
+        if @options.closable
+            @container.append($('<a/>', {
+                class: 'tutorial-close'
+                html: '&#10006;'
+            }).click @end)
 
         @canvas = $('<canvas/>', {
             class: 'tutorial-canvas'

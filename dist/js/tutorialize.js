@@ -20,7 +20,8 @@
           color: 'white'
         },
         backdrop: true,
-        exitOnBackgroundClick: false
+        closeOnBackgroundClick: false,
+        closable: true
       };
       this.tutorial = tutorial;
       this.options = $.extend(true, defaultOptions, options);
@@ -42,13 +43,15 @@
           background: tutorialBg
         }
       }).appendTo($('body'));
-      if (this.options.exitOnBackgroundClick) {
+      if (this.options.closable && this.options.closeOnBackgroundClick) {
         this.container.click(this.end);
       }
-      this.container.append($('<a/>', {
-        "class": 'tutorial-close',
-        html: '&#10006;'
-      }).click(this.end));
+      if (this.options.closable) {
+        this.container.append($('<a/>', {
+          "class": 'tutorial-close',
+          html: '&#10006;'
+        }).click(this.end));
+      }
       this.canvas = $('<canvas/>', {
         "class": 'tutorial-canvas'
       }).appendTo(this.container).attr('width', this.container.width()).attr('height', this.container.height())[0];
