@@ -1,3 +1,6 @@
+$border: 1px solid #ccc;
+$shadow: 0 0 25px #333;
+
 .tutorial-backdrop {
   height: 100%;
   left: 0;
@@ -19,13 +22,42 @@
   }
 }
 
+.tutorial-message {
+  background: #fff;
+  border: $border;
+  border-radius: 5px;
+  box-shadow: $shadow;
+  left: 50%;
+  position: absolute;
+  top: 30%;
+
+  .tutorial-message-title {
+    border-bottom: 1px solid #ccc;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 10px 0;
+    text-align: center;
+  }
+
+  .tutorial-message-text {
+    padding: 10px;
+  }
+
+  .tutorial-message-next {
+    float: right;
+    margin: 5px;
+  }
+}
+
 .tutorial-annotation {
   background-color: #fff;
+  border: $border;
   border-radius: 5px;
+  box-shadow: $shadow;
   padding: 10px;
   position: absolute;
 
-  p {
+  .tutorial-annotation-text {
     margin: 0;
   }
 }

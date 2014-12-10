@@ -52,6 +52,24 @@ class Tutorialize
         @canvas = null
 
     showPanel: (panel) =>
+        @container.find('.tutorial-message, .tutorial-annotation').remove()
+        @canvas.getContext('2d').clearRect 0, 0, @canvas.width, @canvas.height
+
+        if @options.interactive
+            message = $('<div/>', {
+                class: 'tutorial-message'
+                html: """
+                 <div class='tutorial-message-title'>#{ panel.title }</div>
+                 <div class='tutorial-message-text'>#{ panel.text }</div>
+                """
+            }).appendTo(@container)
+            .append $('<button/>', {
+                class: 'tutorial-message-next'
+                text: if @onLastPanel() then 'Finish' else 'Next'
+            }).click(@next)
+
+            message.css 'margin-left', message.width() / -2
+
         for annotation in panel.annotations
             annotationX = annotation.position.x
             annotationY = annotation.position.y
@@ -63,6 +81,7 @@ class Tutorialize
                     top: annotationY
 
             }).append($('<p/>', {
+                class: 'tutorial-annotation-text'
                 html: annotation.text
             })).appendTo @container
 
@@ -110,8 +129,17 @@ class Tutorialize
                     context.restore()
 
     showPanelAtIndex: (index) =>
-        @showPanel @tutorial[index]
         @currentIndex = index
+        @showPanel @tutorial[index]
+
+    onLastPanel: () =>
+        return @currentIndex == @tutorial.length - 1
+
+    next: () =>
+        if @onLastPanel()
+            @end()
+        else
+            @showPanelAtIndex @currentIndex + 1
 
 
 (($) ->

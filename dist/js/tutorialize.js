@@ -5,6 +5,8 @@
 
   Tutorialize = (function() {
     function Tutorialize(tutorial, options) {
+      this.next = __bind(this.next, this);
+      this.onLastPanel = __bind(this.onLastPanel, this);
       this.showPanelAtIndex = __bind(this.showPanelAtIndex, this);
       this.showPanel = __bind(this.showPanel, this);
       this.end = __bind(this.end, this);
@@ -62,7 +64,19 @@
     };
 
     Tutorialize.prototype.showPanel = function(panel) {
-      var angle, annotation, annotationElement, annotationX, annotationY, arrowX, arrowX2, arrowY, arrowY2, context, element, elements, extraDegrees, slope, _i, _len, _ref, _results;
+      var angle, annotation, annotationElement, annotationX, annotationY, arrowX, arrowX2, arrowY, arrowY2, context, element, elements, extraDegrees, message, slope, _i, _len, _ref, _results;
+      this.container.find('.tutorial-message, .tutorial-annotation').remove();
+      this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
+      if (this.options.interactive) {
+        message = $('<div/>', {
+          "class": 'tutorial-message',
+          html: "<div class='tutorial-message-title'>" + panel.title + "</div>\n<div class='tutorial-message-text'>" + panel.text + "</div>"
+        }).appendTo(this.container).append($('<button/>', {
+          "class": 'tutorial-message-next',
+          text: this.onLastPanel() ? 'Finish' : 'Next'
+        }).click(this.next));
+        message.css('margin-left', message.width() / -2);
+      }
       _ref = panel.annotations;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -76,6 +90,7 @@
             top: annotationY
           }
         }).append($('<p/>', {
+          "class": 'tutorial-annotation-text',
           html: annotation.text
         })).appendTo(this.container);
         if (annotation.arrow) {
@@ -124,8 +139,20 @@
     };
 
     Tutorialize.prototype.showPanelAtIndex = function(index) {
-      this.showPanel(this.tutorial[index]);
-      return this.currentIndex = index;
+      this.currentIndex = index;
+      return this.showPanel(this.tutorial[index]);
+    };
+
+    Tutorialize.prototype.onLastPanel = function() {
+      return this.currentIndex === this.tutorial.length - 1;
+    };
+
+    Tutorialize.prototype.next = function() {
+      if (this.onLastPanel()) {
+        return this.end();
+      } else {
+        return this.showPanelAtIndex(this.currentIndex + 1);
+      }
     };
 
     return Tutorialize;
