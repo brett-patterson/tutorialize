@@ -38,7 +38,7 @@ class Tutorialize
 
         if @options.interactive
             @container.click @next
-            $(document).keydown @onKeyDown
+            $(document).keydown @changePageOnKeyDown
 
         if @options.closable and not @options.interactive
             @container.click @end
@@ -48,6 +48,8 @@ class Tutorialize
                 class: 'tutorial-close'
                 html: '&#10006;'
             }).click @end)
+
+            $(document).keydown @closeOnKeyDown
 
         @canvas = $('<canvas/>', {
             class: 'tutorial-canvas'
@@ -59,7 +61,8 @@ class Tutorialize
 
     end: () =>
         @container.off 'click', @next
-        $(document).off 'keydown', @onKeyDown
+        $(document).off 'keydown', @changePageOnKeyDown
+        $(document).off 'keydown', @closeOnKeyDown
 
         @container.remove()
         $(@canvas).remove()
@@ -162,12 +165,16 @@ class Tutorialize
         @showPanel @tutorial[index]
         @updateCounter()
 
-    onKeyDown: (e) =>
+    changePageOnKeyDown: (e) =>
         switch e.which
             when 37
                 @prev()
             when 39
                 @next()
+
+    closeOnKeyDown: (e) =>
+        if e.which == 27
+            @end()
 
     next: () =>
         if -1 < @currentIndex < @tutorial.length - 1

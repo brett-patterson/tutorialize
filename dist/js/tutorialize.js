@@ -7,7 +7,8 @@
     function Tutorialize(tutorial, options) {
       this.prev = __bind(this.prev, this);
       this.next = __bind(this.next, this);
-      this.onKeyDown = __bind(this.onKeyDown, this);
+      this.closeOnKeyDown = __bind(this.closeOnKeyDown, this);
+      this.changePageOnKeyDown = __bind(this.changePageOnKeyDown, this);
       this.showPanelAtIndex = __bind(this.showPanelAtIndex, this);
       this.showPanel = __bind(this.showPanel, this);
       this.updateCounter = __bind(this.updateCounter, this);
@@ -55,7 +56,7 @@
       }
       if (this.options.interactive) {
         this.container.click(this.next);
-        $(document).keydown(this.onKeyDown);
+        $(document).keydown(this.changePageOnKeyDown);
       }
       if (this.options.closable && !this.options.interactive) {
         this.container.click(this.end);
@@ -65,6 +66,7 @@
           "class": 'tutorial-close',
           html: '&#10006;'
         }).click(this.end));
+        $(document).keydown(this.closeOnKeyDown);
       }
       this.canvas = $('<canvas/>', {
         "class": 'tutorial-canvas'
@@ -74,7 +76,8 @@
 
     Tutorialize.prototype.end = function() {
       this.container.off('click', this.next);
-      $(document).off('keydown', this.onKeyDown);
+      $(document).off('keydown', this.changePageOnKeyDown);
+      $(document).off('keydown', this.closeOnKeyDown);
       this.container.remove();
       $(this.canvas).remove();
       $('body').find('.tutorial-show-element').removeClass('tutorial-show-element');
@@ -165,12 +168,18 @@
       return this.updateCounter();
     };
 
-    Tutorialize.prototype.onKeyDown = function(e) {
+    Tutorialize.prototype.changePageOnKeyDown = function(e) {
       switch (e.which) {
         case 37:
           return this.prev();
         case 39:
           return this.next();
+      }
+    };
+
+    Tutorialize.prototype.closeOnKeyDown = function(e) {
+      if (e.which === 27) {
+        return this.end();
       }
     };
 
