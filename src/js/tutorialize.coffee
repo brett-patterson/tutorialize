@@ -4,11 +4,12 @@ class Tutorialize
             tutorial: []
             interactive: false
             arrows:
-                weight: 6
+                weight: 1
                 color: 'white'
+                distance: 80
             backdrop: true
-            closeOnBackgroundClick: false
             closable: true
+            annotationPadding: 10
 
         @tutorial = tutorial
         @options = $.extend true, defaultOptions, options
@@ -18,7 +19,7 @@ class Tutorialize
 
     start: () =>
         if @options.backdrop
-            tutorialBg = 'rgba(0, 0, 0, 0.5)'
+            tutorialBg = 'rgba(0, 0, 0, 0.8)'
         else
             tutorialBg = 'none'
 
@@ -28,7 +29,7 @@ class Tutorialize
                 background: tutorialBg
         }).appendTo $ 'body'
 
-        if @options.closable and @options.closeOnBackgroundClick
+        if @options.closable and not @options.interactive
             @container.click @end
 
         if @options.closable
@@ -48,6 +49,8 @@ class Tutorialize
     end: () =>
         @container.remove()
         $(@canvas).remove()
+        $('body').find('.tutorial-show-element')
+            .removeClass 'tutorial-show-element'
 
         @currentIndex = -1
         @container = null
@@ -55,84 +58,103 @@ class Tutorialize
 
     showPanel: (panel) =>
         @container.find('.tutorial-message, .tutorial-annotation').remove()
+        $('body').find('.tutorial-show-element')
+            .removeClass 'tutorial-show-element'
         @canvas.getContext('2d').clearRect 0, 0, @canvas.width, @canvas.height
 
         if @options.interactive
-            message = $('<div/>', {
-                class: 'tutorial-message'
-                html: """
-                 <div class='tutorial-message-title'>#{ panel.title }</div>
-                 <div class='tutorial-message-text'>#{ panel.text }</div>
-                """
-            }).appendTo(@container)
-            .append $('<button/>', {
-                class: 'tutorial-message-next'
-                text: if @onLastPanel() then 'Finish' else 'Next'
-            }).click(@next)
-
-            message.css 'margin-left', message.width() / -2
+            @container.click(@next)
+            $(document).keydown (e) =>
+                switch e.which
+                    when 37
+                        @prev()
+                    when 39
+                        @next()
 
         for annotation in panel.annotations
-            annotationX = annotation.position.x
-            annotationY = annotation.position.y
-
             annotationElement = $('<div/>', {
                 class: 'tutorial-annotation'
-                css:
-                    left: annotationX
-                    top: annotationY
 
             }).append($('<p/>', {
                 class: 'tutorial-annotation-text'
                 html: annotation.text
             })).appendTo @container
 
+            element = $ annotation.selector
+            element.addClass 'tutorial-show-element'
+
+            if $.type annotation.arrow == 'object'
+                arrowOptions = {}
+                $.extend arrowOptions, @options.arrows, annotation.arrow
+            else
+                arrowOptions = @options.arrows
+
+            annotationPadding = annotation.padding ? @options.annotationPadding
+
+            elOffset = element.offset()            
+            switch annotation.position
+                when 'top'
+                    annotationX = elOffset.left + element.width() / 2 -
+                                  annotationElement.width() / 2
+                    annotationY = elOffset.top - arrowOptions.distance
+
+                    arrowX = annotationX + annotationElement.width() / 2
+                    arrowY = annotationY + annotationElement.height() +
+                             annotationPadding
+
+                when 'bottom'
+                    annotationX = elOffset.left + element.width() / 2 -
+                                  annotationElement.width() / 2
+                    annotationY = elOffset.top + element.height() +
+                                  arrowOptions.distance
+
+                    arrowX = annotationX + annotationElement.width() / 2
+                    arrowY = annotationY - annotationPadding
+
+                when 'left'
+                    annotationX = elOffset.left - arrowOptions.distance
+                    annotationY = elOffset.top + element.height() / 2 -
+                                  annotationElement.height() / 2
+
+                    arrowX = annotationX + annotationElement.width() +
+                             annotationPadding
+                    arrowY = annotationY + annotationElement.height() / 2
+
+                when 'right'
+                    annotationX = elOffset.left + element.width() +
+                                  arrowOptions.distance
+                    annotationY = elOffset.top + element.height() / 2 -
+                                  annotationElement.height() / 2
+
+                    arrowX = annotationX - annotationPadding
+                    arrowY = annotationY + annotationElement.height() / 2
+
+            annotationElement.css 'left', annotationX
+            annotationElement.css 'top', annotationY
+
             if annotation.arrow
-                elements = $ annotation.selector
+                context = @canvas.getContext '2d'
+                context.save()
+                context.strokeStyle = arrowOptions.color
+                context.lineWidth = arrowOptions.weight
 
-                for element in elements
-                    element = $ element
-                    context = @canvas.getContext '2d'
-                    context.save()
+                context.beginPath()
+                context.moveTo arrowX, arrowY
 
-                    context.beginPath()
-                    arrowX = annotationX +
-                             annotationElement.outerWidth() / 2
-                    arrowY = annotationY +
-                             annotationElement.outerHeight() / 2
-                    context.moveTo arrowX, arrowY
+                arrowX2 = elOffset.left + element.width() / 2
+                arrowY2 = elOffset.top + element.height() / 2
+                context.lineTo arrowX2, arrowY2
 
-                    arrowX2 = element.offset().left + element.width() / 2
-                    arrowY2 = element.offset().top + element.height() / 2
-                    context.lineTo arrowX2, arrowY2
-
-                    context.strokeStyle = @options.arrows.color
-                    context.lineWidth = @options.arrows.weight
-                    context.stroke()
-                    context.closePath()
-
-
-                    slope = (arrowY2 - arrowY) / (arrowX2 - arrowX)
-                    angle = Math.atan(slope)
-                    extraDegrees = if arrowX2 > arrowX then 90 else -90
-                    angle += extraDegrees * Math.PI / 180;
-
-                    context.beginPath()
-                    context.translate(arrowX2, arrowY2)
-                    context.rotate(angle)
-                    context.moveTo(0, -10)
-                    context.lineTo(8, 8)
-                    context.lineTo(-8, 8)
-
-                    context.fillStyle = @options.arrows.color
-                    context.fill()
-
-                    context.closePath()
-                    context.restore()
+                context.stroke()
+                context.closePath()
+                context.restore()
 
     showPanelAtIndex: (index) =>
         @currentIndex = index
         @showPanel @tutorial[index]
+
+    onFirstPanel: () =>
+        return @currentIndex == 0
 
     onLastPanel: () =>
         return @currentIndex == @tutorial.length - 1
@@ -143,6 +165,9 @@ class Tutorialize
         else
             @showPanelAtIndex @currentIndex + 1
 
+    prev: () =>
+        if not @onFirstPanel()
+            @showPanelAtIndex @currentIndex - 1
 
 (($) ->
     $.tutorialize = (options={}) ->
