@@ -10,12 +10,14 @@ class Tutorialize
             backdrop: true
             closable: true
             annotationPadding: 10
+            counter: true
 
         @tutorial = tutorial
         @options = $.extend true, defaultOptions, options
         @currentIndex = -1
         @container = null
         @canvas = null
+        @counter = null
 
     start: () =>
         if @options.backdrop
@@ -28,6 +30,15 @@ class Tutorialize
             css:
                 background: tutorialBg
         }).appendTo $ 'body'
+
+        if @options.counter
+            @counter = $('<div/>', {
+                class: 'tutorial-panel-counter'
+            }).appendTo @container
+
+        if @options.interactive
+            @container.click @next
+            $(document).keydown @onKeyDown
 
         if @options.closable and not @options.interactive
             @container.click @end
@@ -47,6 +58,9 @@ class Tutorialize
         @showPanelAtIndex 0
 
     end: () =>
+        @container.off 'click', @next
+        $(document).off 'keydown', @onKeyDown
+
         @container.remove()
         $(@canvas).remove()
         $('body').find('.tutorial-show-element')
@@ -56,22 +70,16 @@ class Tutorialize
         @container = null
         @canvas = null
 
+    updateCounter: () =>
+        @counter?.text "#{ @currentIndex + 1 } / #{ @tutorial.length }"
+
     showPanel: (panel) =>
         @container.find('.tutorial-message, .tutorial-annotation').remove()
         $('body').find('.tutorial-show-element')
             .removeClass 'tutorial-show-element'
         @canvas.getContext('2d').clearRect 0, 0, @canvas.width, @canvas.height
 
-        if @options.interactive
-            @container.click(@next)
-            $(document).keydown (e) =>
-                switch e.which
-                    when 37
-                        @prev()
-                    when 39
-                        @next()
-
-        for annotation in panel.annotations
+        for annotation in panel
             annotationElement = $('<div/>', {
                 class: 'tutorial-annotation'
 
@@ -152,21 +160,23 @@ class Tutorialize
     showPanelAtIndex: (index) =>
         @currentIndex = index
         @showPanel @tutorial[index]
+        @updateCounter()
 
-    onFirstPanel: () =>
-        return @currentIndex == 0
-
-    onLastPanel: () =>
-        return @currentIndex == @tutorial.length - 1
+    onKeyDown: (e) =>
+        switch e.which
+            when 37
+                @prev()
+            when 39
+                @next()
 
     next: () =>
-        if @onLastPanel()
-            @end()
-        else
+        if -1 < @currentIndex < @tutorial.length - 1
             @showPanelAtIndex @currentIndex + 1
+        else
+            @end()
 
     prev: () =>
-        if not @onFirstPanel()
+        if @tutorial.length > @currentIndex > 0
             @showPanelAtIndex @currentIndex - 1
 
 (($) ->

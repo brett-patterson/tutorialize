@@ -27,3 +27,9 @@
 .tutorial-show-element {
   position: relative;
   z-index: 9997; }
+
+.tutorial-panel-counter {
+  bottom: 15px;
+  color: #fff;
+  position: absolute;
+  right: 15px; }

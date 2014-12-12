@@ -7,10 +7,10 @@
     function Tutorialize(tutorial, options) {
       this.prev = __bind(this.prev, this);
       this.next = __bind(this.next, this);
-      this.onLastPanel = __bind(this.onLastPanel, this);
-      this.onFirstPanel = __bind(this.onFirstPanel, this);
+      this.onKeyDown = __bind(this.onKeyDown, this);
       this.showPanelAtIndex = __bind(this.showPanelAtIndex, this);
       this.showPanel = __bind(this.showPanel, this);
+      this.updateCounter = __bind(this.updateCounter, this);
       this.end = __bind(this.end, this);
       this.start = __bind(this.start, this);
       var defaultOptions;
@@ -24,13 +24,15 @@
         },
         backdrop: true,
         closable: true,
-        annotationPadding: 10
+        annotationPadding: 10,
+        counter: true
       };
       this.tutorial = tutorial;
       this.options = $.extend(true, defaultOptions, options);
       this.currentIndex = -1;
       this.container = null;
       this.canvas = null;
+      this.counter = null;
     }
 
     Tutorialize.prototype.start = function() {
@@ -46,6 +48,15 @@
           background: tutorialBg
         }
       }).appendTo($('body'));
+      if (this.options.counter) {
+        this.counter = $('<div/>', {
+          "class": 'tutorial-panel-counter'
+        }).appendTo(this.container);
+      }
+      if (this.options.interactive) {
+        this.container.click(this.next);
+        $(document).keydown(this.onKeyDown);
+      }
       if (this.options.closable && !this.options.interactive) {
         this.container.click(this.end);
       }
@@ -62,6 +73,8 @@
     };
 
     Tutorialize.prototype.end = function() {
+      this.container.off('click', this.next);
+      $(document).off('keydown', this.onKeyDown);
       this.container.remove();
       $(this.canvas).remove();
       $('body').find('.tutorial-show-element').removeClass('tutorial-show-element');
@@ -70,28 +83,19 @@
       return this.canvas = null;
     };
 
+    Tutorialize.prototype.updateCounter = function() {
+      var _ref;
+      return (_ref = this.counter) != null ? _ref.text("" + (this.currentIndex + 1) + " / " + this.tutorial.length) : void 0;
+    };
+
     Tutorialize.prototype.showPanel = function(panel) {
-      var annotation, annotationElement, annotationPadding, annotationX, annotationY, arrowOptions, arrowX, arrowX2, arrowY, arrowY2, context, elOffset, element, _i, _len, _ref, _ref1, _results;
+      var annotation, annotationElement, annotationPadding, annotationX, annotationY, arrowOptions, arrowX, arrowX2, arrowY, arrowY2, context, elOffset, element, _i, _len, _ref, _results;
       this.container.find('.tutorial-message, .tutorial-annotation').remove();
       $('body').find('.tutorial-show-element').removeClass('tutorial-show-element');
       this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
-      if (this.options.interactive) {
-        this.container.click(this.next);
-        $(document).keydown((function(_this) {
-          return function(e) {
-            switch (e.which) {
-              case 37:
-                return _this.prev();
-              case 39:
-                return _this.next();
-            }
-          };
-        })(this));
-      }
-      _ref = panel.annotations;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        annotation = _ref[_i];
+      for (_i = 0, _len = panel.length; _i < _len; _i++) {
+        annotation = panel[_i];
         annotationElement = $('<div/>', {
           "class": 'tutorial-annotation'
         }).append($('<p/>', {
@@ -106,7 +110,7 @@
         } else {
           arrowOptions = this.options.arrows;
         }
-        annotationPadding = (_ref1 = annotation.padding) != null ? _ref1 : this.options.annotationPadding;
+        annotationPadding = (_ref = annotation.padding) != null ? _ref : this.options.annotationPadding;
         elOffset = element.offset();
         switch (annotation.position) {
           case 'top':
@@ -157,27 +161,31 @@
 
     Tutorialize.prototype.showPanelAtIndex = function(index) {
       this.currentIndex = index;
-      return this.showPanel(this.tutorial[index]);
+      this.showPanel(this.tutorial[index]);
+      return this.updateCounter();
     };
 
-    Tutorialize.prototype.onFirstPanel = function() {
-      return this.currentIndex === 0;
-    };
-
-    Tutorialize.prototype.onLastPanel = function() {
-      return this.currentIndex === this.tutorial.length - 1;
+    Tutorialize.prototype.onKeyDown = function(e) {
+      switch (e.which) {
+        case 37:
+          return this.prev();
+        case 39:
+          return this.next();
+      }
     };
 
     Tutorialize.prototype.next = function() {
-      if (this.onLastPanel()) {
-        return this.end();
-      } else {
+      var _ref;
+      if ((-1 < (_ref = this.currentIndex) && _ref < this.tutorial.length - 1)) {
         return this.showPanelAtIndex(this.currentIndex + 1);
+      } else {
+        return this.end();
       }
     };
 
     Tutorialize.prototype.prev = function() {
-      if (!this.onFirstPanel()) {
+      var _ref;
+      if ((this.tutorial.length > (_ref = this.currentIndex) && _ref > 0)) {
         return this.showPanelAtIndex(this.currentIndex - 1);
       }
     };
