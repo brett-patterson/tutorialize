@@ -1,10 +1,15 @@
-.tutorial-backdrop {
+.tutorial-container, .tutorial-backdrop {
   height: 100%;
   left: 0;
-  position: absolute;
   top: 0;
   width: 100%;
   z-index: 999997; }
+
+.tutorial-container {
+  position: absolute; }
+
+.tutorial-backdrop {
+  position: fixed; }
 
 .tutorial-close {
   color: #fff;

@@ -15,19 +15,20 @@ class Tutorialize
         @options = $.extend true, defaultOptions, options
         @currentIndex = -1
         @container = null
+        @backdrop = null
         @canvas = null
         @counter = null
 
     start: () =>
         if @options.backdrop
-            tutorialBg = 'rgba(0, 0, 0, 0.8)'
-        else
-            tutorialBg = 'none'
+            @backdrop = $('<div/>', {
+                class: 'tutorial-backdrop'
+                css:
+                    background: 'rgba(0, 0, 0, 0.8)'
+            }).appendTo $ 'body'
 
         @container = $('<div/>', {
-            class: 'tutorial-backdrop'
-            css:
-                background: tutorialBg
+            class: 'tutorial-container'
         }).appendTo $ 'body'
 
         if @options.counter
@@ -64,6 +65,7 @@ class Tutorialize
         $(document).off 'keydown', @closeOnKeyDown
 
         @container.remove()
+        @backdrop?.remove()
         $(@canvas).remove()
         $('body').find('.tutorial-show-element')
             .removeClass 'tutorial-show-element'

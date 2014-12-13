@@ -31,22 +31,22 @@
       this.options = $.extend(true, defaultOptions, options);
       this.currentIndex = -1;
       this.container = null;
+      this.backdrop = null;
       this.canvas = null;
       this.counter = null;
     }
 
     Tutorialize.prototype.start = function() {
-      var tutorialBg;
       if (this.options.backdrop) {
-        tutorialBg = 'rgba(0, 0, 0, 0.8)';
-      } else {
-        tutorialBg = 'none';
+        this.backdrop = $('<div/>', {
+          "class": 'tutorial-backdrop',
+          css: {
+            background: 'rgba(0, 0, 0, 0.8)'
+          }
+        }).appendTo($('body'));
       }
       this.container = $('<div/>', {
-        "class": 'tutorial-backdrop',
-        css: {
-          background: tutorialBg
-        }
+        "class": 'tutorial-container'
       }).appendTo($('body'));
       if (this.options.counter) {
         this.counter = $('<div/>', {
@@ -74,10 +74,14 @@
     };
 
     Tutorialize.prototype.end = function() {
+      var _ref;
       this.container.off('click', this.next);
       $(document).off('keydown', this.changePageOnKeyDown);
       $(document).off('keydown', this.closeOnKeyDown);
       this.container.remove();
+      if ((_ref = this.backdrop) != null) {
+        _ref.remove();
+      }
       $(this.canvas).remove();
       $('body').find('.tutorial-show-element').removeClass('tutorial-show-element');
       this.currentIndex = -1;
