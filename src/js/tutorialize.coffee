@@ -1,7 +1,6 @@
 class Tutorialize
     constructor: (tutorial, options) ->
         defaultOptions =
-            tutorial: []
             interactive: false
             arrows:
                 weight: 1

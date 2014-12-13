@@ -16,7 +16,6 @@
       this.start = __bind(this.start, this);
       var defaultOptions;
       defaultOptions = {
-        tutorial: [],
         interactive: false,
         arrows: {
           weight: 1,
