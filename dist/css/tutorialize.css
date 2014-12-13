@@ -4,7 +4,7 @@
   position: absolute;
   top: 0;
   width: 100%;
-  z-index: 9996; }
+  z-index: 999997; }
 
 .tutorial-close {
   color: #fff;
@@ -13,18 +13,19 @@
   position: absolute;
   right: 15px;
   top: 15px;
-  z-index: 9999; }
+  z-index: 999999; }
 
 .tutorial-annotation {
   color: #fff;
   position: absolute;
-  z-index: 9998; }
+  z-index: 999998; }
   .tutorial-annotation .tutorial-annotation-text {
     margin: 0; }
 
 .tutorial-show-element {
+  background: #fff;
   position: relative;
-  z-index: 9997; }
+  z-index: 999999; }
 
 .tutorial-panel-counter {
   bottom: 15px;
