@@ -1,4 +1,4 @@
 ./node_modules/.bin/coffeebar -o dist/js/tutorialize.js src/js/tutorialize.coffee
 ./node_modules/.bin/coffeebar -m -o dist/js/tutorialize.min.js src/js/tutorialize.coffee
 sass --sourcemap=none src/css/tutorialize.scss dist/css/tutorialize.css
-sass --style compressed src/css/tutorialize.scss dist/css/tutorialize.min.css
+sass --style compressed --sourcemap=none src/css/tutorialize.scss dist/css/tutorialize.min.css
