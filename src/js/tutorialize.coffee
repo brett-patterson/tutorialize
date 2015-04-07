@@ -1,4 +1,4 @@
-loader = (root, factory) =>
+loader = (root, factory) ->
     if typeof define == 'function' && define.amd
         define(['jquery'], factory);
     else if typeof exports == 'object'
@@ -6,7 +6,7 @@ loader = (root, factory) =>
     else
         root.Tutorialize = factory(root.jQuery);
 
-loader this, ($) =>
+loader this, ($) ->
    return class Tutorialize
         constructor: (tutorial, options) ->
             defaultOptions =

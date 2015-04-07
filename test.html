@@ -43,36 +43,36 @@
     </style>
 
     <script type="text/javascript">
-    $(function() {
-        var tutorial = $.tutorialize({
-            interactive: true,
-            tutorial: [
-                [ // Panel 1
-                    { // Annotation 1
-                        selector: '.one',
-                        arrow: true,
-                        text: '<center><strong>Div #1</strong></center>' +
-                              'This is div #1',
-                        position: 'right'
-                    },
-                    { // Annotation 2
-                        selector: '.three',
-                        arrow: true,
-                        text: '<center><strong>Div #3</strong></center>' +
-                              'This is div #3',
-                        position: 'bottom'
-                    }
-                ],
-                [ // Panel 2
-                    { // Annotation 1
-                        selector: '.two',
-                        arrow: true,
-                        text: '<center><strong>Div #2</strong></center>' +
-                              'This is div #2',
-                        position: 'right'
-                    }
-                ]
+    $(function () {
+        'use strict';
+        var tutorial = new Tutorialize([
+            [ // Panel 1
+                { // Annotation 1
+                    selector: '.one',
+                    arrow: true,
+                    text: '<center><strong>Div #1</strong></center>' +
+                          'This is div #1',
+                    position: 'right'
+                },
+                { // Annotation 2
+                    selector: '.three',
+                    arrow: true,
+                    text: '<center><strong>Div #3</strong></center>' +
+                          'This is div #3',
+                    position: 'bottom'
+                }
+            ],
+            [ // Panel 2
+                { // Annotation 1
+                    selector: '.two',
+                    arrow: true,
+                    text: '<center><strong>Div #2</strong></center>' +
+                          'This is div #2',
+                    position: 'right'
+                }
             ]
+        ], {
+            interactive: true
         });
 
         tutorial.start();
