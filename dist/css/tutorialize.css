@@ -9,6 +9,7 @@
   position: absolute; }
 
 .tutorial-backdrop {
+  background-color: rgba(0, 0, 0, 0.8);
   position: fixed; }
 
 .tutorial-close {
@@ -29,6 +30,7 @@
 
 .tutorial-show-element {
   background: #fff;
+  border: 1px solid #fff;
   position: relative;
   z-index: 999999; }
 

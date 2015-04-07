@@ -32,8 +32,6 @@ loader this, ($) ->
             if @options.backdrop
                 @backdrop = $('<div/>', {
                     class: 'tutorial-backdrop'
-                    css:
-                        background: 'rgba(0, 0, 0, 0.8)'
                 }).appendTo $ 'body'
 
             @container = $('<div/>', {

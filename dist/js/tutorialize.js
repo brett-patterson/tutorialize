@@ -50,10 +50,7 @@ loader(this, function($) {
     Tutorialize.prototype.start = function() {
       if (this.options.backdrop) {
         this.backdrop = $('<div/>', {
-          "class": 'tutorial-backdrop',
-          css: {
-            background: 'rgba(0, 0, 0, 0.8)'
-          }
+          "class": 'tutorial-backdrop'
         }).appendTo($('body'));
       }
       this.container = $('<div/>', {
