@@ -29,10 +29,12 @@
     margin: 0; }
 
 .tutorial-show-element {
-  background: #fff;
   border: 1px solid #fff;
   position: relative;
   z-index: 999999; }
+
+.tutorial-show-element-background {
+  background: #fff; }
 
 .tutorial-panel-counter {
   bottom: 15px;

@@ -42,10 +42,13 @@ $show-element-highlight: #fff;
 }
 
 .tutorial-show-element {
-  background: $show-element-highlight;
   border: 1px solid $show-element-highlight;
   position: relative;
   z-index: 999999;
+}
+
+.tutorial-show-element-background {
+  background: $show-element-highlight;
 }
 
 .tutorial-panel-counter {

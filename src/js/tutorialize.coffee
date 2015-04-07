@@ -102,6 +102,9 @@ loader this, ($) ->
                 element = $ annotation.selector
                 element.addClass 'tutorial-show-element'
 
+                if !annotation.noBackground
+                    element.addClass 'tutorial-show-element-background'
+
                 if $.type annotation.arrow == 'object'
                     arrowOptions = {}
                     $.extend arrowOptions, @options.arrows, annotation.arrow
