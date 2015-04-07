@@ -1,4 +1,12 @@
-define(['jquery'], ($) =>
+loader = (root, factory) =>
+    if typeof define == 'function' && define.amd
+        define(['jquery'], factory);
+    else if typeof exports == 'object'
+        module.exports = factory(require('jquery'));
+    else
+        root.Tutorialize = factory(root.jQuery);
+
+loader this, ($) =>
    return class Tutorialize
         constructor: (tutorial, options) ->
             defaultOptions =
@@ -187,4 +195,3 @@ define(['jquery'], ($) =>
         prev: () =>
             if @tutorial.length > @currentIndex > 0
                 @showPanelAtIndex @currentIndex - 1
-);
