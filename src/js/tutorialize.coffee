@@ -113,7 +113,7 @@ loader this, ($) ->
 
                 annotationPadding = annotation.padding ? @options.annotationPadding
 
-                elOffset = element.offset()            
+                elOffset = element.offset()
                 switch annotation.position
                     when 'top'
                         annotationX = elOffset.left + element.width() / 2 -
